@@ -58,6 +58,7 @@ void nn_pipebase_init (struct nn_pipebase *self,
     self->instate = NN_PIPEBASE_INSTATE_DEACTIVATED;
     self->outstate = NN_PIPEBASE_OUTSTATE_DEACTIVATED;
     self->sock = ep->sock;
+    self->sock->is_connected = 0;
     memcpy (&self->options, &ep->options, sizeof (struct nn_ep_options));
     nn_fsm_event_init (&self->in);
     nn_fsm_event_init (&self->out);
@@ -87,6 +88,7 @@ int nn_pipebase_start (struct nn_pipebase *self)
         return rc;
     }
     nn_fsm_raise (&self->fsm, &self->out, NN_PIPE_OUT);
+    self->sock->is_connected = 1;
 
     return 0;
 }
@@ -96,6 +98,7 @@ void nn_pipebase_stop (struct nn_pipebase *self)
     if (self->state == NN_PIPEBASE_STATE_ACTIVE)
         nn_sock_rm (self->sock, (struct nn_pipe*) self);
     self->state = NN_PIPEBASE_STATE_IDLE;
+    self->sock->is_connected = 0;
 }
 
 void nn_pipebase_received (struct nn_pipebase *self)
