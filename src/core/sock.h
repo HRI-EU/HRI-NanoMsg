@@ -45,6 +45,9 @@ struct nn_sock
     struct nn_fsm fsm;
     int state;
 
+    /* socket connection status */
+    int is_connected;
+
     /*  Pointer to the instance of the specific socket type. */
     struct nn_sockbase *sockbase;
 

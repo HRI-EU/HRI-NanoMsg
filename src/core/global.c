@@ -1145,3 +1145,20 @@ void nn_global_rele_socket(struct nn_sock *sock)
     nn_sock_rele(sock);
     nn_mutex_unlock(&self.lock);
 }
+
+int nn_isconnected (int s)
+{
+    int rc;
+    struct nn_sock *sock;
+
+    rc = nn_global_hold_socket (&sock, s);
+    if (nn_slow (rc < 0)) {
+        errno = -rc;
+        return -1;
+    }
+
+    rc = sock->is_connected;
+
+    nn_global_rele_socket (sock);
+    return rc;
+}
